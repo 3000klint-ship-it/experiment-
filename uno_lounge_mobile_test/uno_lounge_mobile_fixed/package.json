@@ -1,0 +1,14 @@
+{
+  "name": "uno-lounge-mobile-test-fixed",
+  "version": "0.2.0",
+  "private": true,
+  "description": "UNO Lounge mobile-first multiplayer test build",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "ws": "^8.18.0"
+  }
+}
