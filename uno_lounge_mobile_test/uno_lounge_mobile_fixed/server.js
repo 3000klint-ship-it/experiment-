@@ -36,7 +36,7 @@ function safeRoom(r){
   return {
     code:r.code, hostId:r.hostId, maxPlayers:r.maxPlayers,
     minCards:r.minCards, maxCards:r.maxCards,
-    players:r.players.map(p=>({id:p.id,username:p.username,host:p.id===r.hostId,connected:!!p.ws}))
+    players:r.players.map(p=>({id:p.id,username:p.username,avatar:p.avatar,host:p.id===r.hostId,connected:!!p.ws}))
   };
 }
 function broadcast(r,msg){
@@ -49,7 +49,7 @@ function broadcastState(r){
     if(!p.ws || p.ws.readyState!==WebSocket.OPEN) continue;
     const game=r.game ? {
       players:r.game.players.map(x=>({
-        id:x.id,username:x.username,seat:x.seat,handCount:x.hand.length,
+        id:x.id,username:x.username,avatar:x.avatar,seat:x.seat,handCount:x.hand.length,
         calledUno:x.calledUno,connected:!!r.players.find(q=>q.id===x.id)?.ws
       })),
       turn:r.game.turn,discard:r.game.discard,currentColor:r.game.currentColor,
@@ -94,7 +94,7 @@ function advance(g,steps=1){ g.turn=nextSeat(g,steps); }
 function startGame(r){
   if(r.players.length<2) throw Error("Need at least 2 players.");
   const deck=shuffle(makeDeck());
-  const gps=r.players.map((p,i)=>({id:p.id,username:p.username,seat:i,hand:[],calledUno:false}));
+  const gps=r.players.map((p,i)=>({id:p.id,username:p.username,avatar:p.avatar,seat:i,hand:[],calledUno:false}));
   const g={players:gps,deck,discardPile:[],discard:null,currentColor:null,turn:0,drawStack:0,winner:null};
   for(const gp of gps) drawCards(r,g,gp,r.minCards);
 
@@ -170,21 +170,23 @@ wss.on("connection", ws=>{
     try{
       if(m.type==="create"){
         const username=String(m.username||"").trim().slice(0,18);
+        const avatar=m.avatar||"avatar1.jpg";
         if(!username) throw Error("Enter a username.");
         const r={code:code(),hostId:clientId,maxPlayers:6,minCards:10,maxCards:30,players:[],game:null};
-        const p={id:clientId,username,ws};
+        const p={id:clientId,username,ws,avatar:avatar};
         r.players.push(p); rooms.set(r.code,r); currentRoom=r;
         ws.send(JSON.stringify({type:"created",code:r.code}));
         broadcastState(r); return;
       }
       if(m.type==="join"){
         const username=String(m.username||"").trim().slice(0,18);
+        const avatar=m.avatar||"avatar1.jpg";
         const r=rooms.get(String(m.code||"").trim().toUpperCase());
         if(!username) throw Error("Enter a username.");
         if(!r) throw Error("Room not found.");
         if(r.game) throw Error("Game already started.");
         if(r.players.length>=r.maxPlayers) throw Error("Room is full.");
-        const p={id:clientId,username,ws}; r.players.push(p); currentRoom=r;
+        const p={id:clientId,username,ws,avatar:avatar}; r.players.push(p); currentRoom=r;
         ws.send(JSON.stringify({type:"joined",code:r.code}));
         broadcastState(r); return;
       }
