@@ -19,6 +19,67 @@ app.get("/avatars",(req,res)=>{
   });
 });
 
+app.get("/gif-search",async (req,res)=>{
+  const key=process.env.GIPHY_KEY;
+  if(!key) return res.json({results:[],needsKey:true});
+  const q=(req.query.q||"").toString().slice(0,60).trim();
+  const url= q
+      ? "https://api.giphy.com/v1/gifs/search?api_key="+encodeURIComponent(key)+"&q="+encodeURIComponent(q)+"&limit=24&rating=g"
+      : "https://api.giphy.com/v1/gifs/trending?api_key="+encodeURIComponent(key)+"&limit=24&rating=g";
+  try{
+    const r=await fetch(url);const j=await r.json();
+    const img=g=>g.images.fixed_width;
+    const out=(j.data||[]).map(g=>({url:img(g).url,width:img(g).width,height:img(g).height}));
+    res.json({results:out});
+  }catch(e){ res.json({results:[]}); }
+});
+
+// GIF proxy with server-side caching: once one player loads a GIF, the file is
+// served from this server for everyone else, so there is no repeated download lag.
+const httpProxy = require("http"), httpsProxy = require("https");
+const gifCache = new Map(); // url -> {buffer, type, expires}
+const gifInflight = new Map(); // url -> Promise resolved when fetched
+const GIF_CACHE_MAX = 60;    // keep up to 60 GIFs in memory
+function fetchGif(target){
+  // Return a promise that resolves to {buffer,type} or rejects. Concurrent
+  // callers for the same URL share one upstream download (no thundering herd).
+  if(gifInflight.has(target)) return gifInflight.get(target);
+  const p=new Promise((resolve,reject)=>{
+    const lib=target.startsWith("https:")?httpsProxy:httpProxy;
+    lib.get(target,(up)=>{
+      if(up.statusCode>=400){ up.resume(); reject(new Error("gif error")); return; }
+      const type=up.headers["content-type"]||"image/gif";
+      const chunks=[]; let size=0;
+      up.on("data",c=>{ if(size<8*1024*1024){chunks.push(c);size+=c.length;} else { up.destroy(); reject(new Error("too big")); } });
+      up.on("end",()=>{ resolve({buffer:Buffer.concat(chunks),type}); });
+      up.on("error",reject);
+    }).on("error",reject);
+  }).then(data=>{
+    const expires=Date.now()+24*60*60*1000;
+    if(gifCache.size>=GIF_CACHE_MAX){ const first=gifCache.keys().next().value; if(first) gifCache.delete(first); }
+    gifCache.set(target,{buffer:data.buffer,type:data.type,expires});
+    return data;
+  }).finally(()=>gifInflight.delete(target));
+  gifInflight.set(target,p);
+  return p;
+}
+app.get("/gif-proxy",(req,res)=>{
+  const target=String(req.query.url||"");
+  if(!/^https:\/\/media[0-9]+\.giphy\.com\//.test(target)) return res.status(400).end("bad url");
+  const cached=gifCache.get(target);
+  if(cached && cached.expires>Date.now()){
+    res.set("Content-Type",cached.type);
+    res.set("Cache-Control","public, max-age=86400");
+    res.send(cached.buffer);
+    return;
+  }
+  fetchGif(target).then(({buffer,type})=>{
+    res.set("Content-Type",type);
+    res.set("Cache-Control","public, max-age=86400");
+    res.send(buffer);
+  }).catch(()=>{ if(!res.headersSent) res.status(502).end("gif error"); });
+});
+
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
@@ -71,7 +132,8 @@ function broadcastState(r){
       turnStartedAt:r.game.turnStartedAt,turnMs:TURN_MS,
       drawStack:r.game.drawStack,winner:r.game.winner||null,
       hand:(me&&!me.spectating)?me.hand:[],
-      rankings:r.game.rankings||[],direction:r.game.direction||1,isOver:!!r.game.isOver
+      rankings:r.game.rankings||[],direction:r.game.direction||1,isOver:!!r.game.isOver,
+      reshuffled:!!r.game.reshuffled
     } : null;
     p.ws.send(JSON.stringify({type:"state",room:base,game}));
   }
@@ -146,6 +208,7 @@ function advance(g,steps=1){
   let maxIter=n;
   while(g.players[s] && (g.players[s].finished||g.players[s].away||g.players[s].spectating) && maxIter-->0) s=(s+g.direction+n)%n;
   g.turn=s;
+  g.reshuffled=false;
   g.turnStartedAt=Date.now();
 }
 
@@ -153,7 +216,7 @@ function startGame(r){
   if(r.players.length<2) throw Error("Need at least 2 players.");
   const deck=shuffle(makeDeck());
   const gps=r.players.map((p,i)=>({id:p.id,username:p.username,avatar:p.avatar,seat:i,hand:[],calledUno:false,finished:false,away:!!p.away,spectating:!!p.spectating}));
-  const g={players:gps,deck,discardPile:[],discard:null,currentColor:null,turn:0,drawStack:0,winner:null,direction:1,rankings:[],isOver:false};
+  const g={players:gps,deck,discardPile:[],discard:null,currentColor:null,turn:0,drawStack:0,winner:null,direction:1,rankings:[],isOver:false,reshuffled:false};
   for(const gp of gps) drawCards(r,g,gp,r.minCards);
 
   // Start with a non-wild card so the first color is clear.
@@ -413,6 +476,39 @@ wss.on("connection", ws=>{
         const text=String(m.text||"").trim().slice(0,200);
         if(!text) return;
         broadcast(ROOM,{type:"chat",playerId:clientId,username:p.username,avatar:p.avatar,text});
+        return;
+      }
+      if(m.type==="chatgif"){
+        const url=String(m.url||"").trim().slice(0,500);
+        if(!url || !/^https?:\/\/.*giphy\.com\//.test(url)) return;
+        const w=Math.max(0,Math.min(500,Number(m.width)||0));
+        const h=Math.max(0,Math.min(500,Number(m.height)||0));
+        const proxyUrl="/gif-proxy?url="+encodeURIComponent(url);
+        broadcast(ROOM,{type:"chatgif",playerId:clientId,username:p.username,avatar:p.avatar,url:proxyUrl,width:w,height:h});
+        return;
+      }
+      if(m.type==="reshuffle"){
+        const g=ROOM.game,gp=gamePlayer(ROOM,clientId);
+        if(!g||g.isOver||!gp){ws.send(JSON.stringify({type:"error",message:"Game is not active."}));return;}
+        if(gp.away||gp.spectating){ws.send(JSON.stringify({type:"error",message:"You can't reshuffle while spectating."}));return;}
+        if(g.players[g.turn]?.id!==clientId){ws.send(JSON.stringify({type:"error",message:"It's not your turn."}));return;}
+        if(g.reshuffled){ws.send(JSON.stringify({type:"error",message:"You already reshuffled this turn."}));return;}
+        // Make sure the deck has at least 3 cards to peek.
+        let guard=0;
+        while(g.deck.length<3 && guard++<3){
+          let src=g.discardPile && g.discardPile.length ? g.discardPile.splice(0) : makeDeck();
+          shuffle(src); g.deck=src.concat(g.deck);
+        }
+        g.reshuffled=true;
+        // Peek (don't remove) the top 3 cards and reveal to everyone.
+        const cards=g.deck.slice(0,3).map(c=>({type:c.type,color:c.color,value:c.value!==undefined?c.value:null}));
+        broadcast(ROOM,{type:"reshuffleReveal",cards,username:gp.username});
+        const nowDeck=g.deck;
+        setTimeout(()=>{ shuffle(nowDeck); broadcastState(ROOM); },1800);
+        return;
+      }
+      if(m.type==="typing"){
+        broadcast(ROOM,{type:"typing",playerId:clientId});
         return;
       }
     }catch(err){

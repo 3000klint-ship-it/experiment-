@@ -13,7 +13,9 @@ button,input{font:inherit}.hidden{display:none!important}.screen{height:100%;dis
 .game-grid{display:grid;grid-template-columns:1fr;gap:12px}.game-card{border:1px solid #6c5427;border-radius:15px;padding:16px;background:#201016}.game-card strong{display:block;color:var(--gold);font-size:1.1rem}.game-card span{font-size:.8rem;color:var(--muted)}
 .lobby-list{margin:18px 0;border:1px solid #543f25;border-radius:14px;overflow:hidden}.player{display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #38252a}.player:last-child{border:0}.avatar{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:#473147;border:3px solid var(--gold);font-size:1.35rem;overflow:hidden;flex-shrink:0}.avatar img{width:100%;height:100%;object-fit:cover;image-rendering:auto}.player .name{flex:1}.tag{font-size:.72rem;color:#dccb9f}.settings{display:grid;grid-template-columns:1fr 1fr;gap:10px}.settings label{font-size:.8rem;color:var(--muted)}select{width:100%;margin-top:4px;padding:10px;border-radius:9px;background:#120b0e;color:#fff;border:1px solid #6d562d}
 #table{height:100%;position:relative;background:radial-gradient(ellipse at 50% 45%,#6b2030 0%,#32131e 43%,#11090d 100%);overflow:hidden}.table-ring{position:absolute;inset:2%;border:2px solid #8e6e31;border-radius:50%/30%;pointer-events:none}.top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;z-index:10}.hostbar{display:flex;gap:6px}.icon{border:1px solid var(--gold);background:#120b0dcc;color:var(--cream);border-radius:10px;padding:8px 10px;cursor:pointer}
-.seats{position:absolute;inset:5% 2% 27%}.seat{position:absolute;width:160px;text-align:center}.seat .avatar{margin:auto;width:120px;height:120px;border:3px solid var(--gold);border-radius:50%}.seat .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;image-rendering:auto}.seat .pname{margin-top:3px;font-weight:700;font-size:.85rem}.seat.turn .avatar{box-shadow:0 0 0 3px #fff,0 0 25px #ffe39b}.seat.disconnected{opacity:.35}.seat.finished{opacity:.5}.seat.finished .avatar{border-color:#888}.seat.finished .rank-badge{color:var(--gold);font-weight:900;font-size:1.1rem;margin-top:2px}
+.seats{position:absolute;inset:5% 2% 27%}.seat{position:absolute;width:160px;text-align:center}.seat .avatar{margin:auto;width:120px;height:120px;border:3px solid var(--gold);border-radius:50%}.seat .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;image-rendering:auto}.seat .pname{margin-top:3px;font-weight:700;font-size:.85rem}.seat.turn .avatar{box-shadow:0 0 0 3px #fff,0 0 25px #ffe39b}
+.seat.turn .pname{color:var(--gold);animation:nameGlow 1.2s ease-in-out infinite}
+@keyframes nameGlow{0%,100%{text-shadow:0 0 5px var(--gold),0 0 12px #ffe39b88}50%{text-shadow:0 0 12px var(--gold),0 0 22px #ffe39bb8}}.seat.disconnected{opacity:.35}.seat.finished{opacity:.5}.seat.finished .avatar{border-color:#888}.seat.finished .rank-badge{color:var(--gold);font-weight:900;font-size:1.1rem;margin-top:2px}
 .card-count{display:flex;align-items:center;justify-content:center;gap:1px;margin-top:3px;flex-wrap:wrap;max-width:140px}.card-count .mini-card{width:12px;height:17px;border-radius:2px;background:linear-gradient(135deg,#751c2a,#2b0d14);border:1px solid var(--gold);box-shadow:0 1px 3px #0006}
 .s1{top:0;left:50%;transform:translateX(-50%)}.s2{top:12%;left:2%}.s3{top:12%;right:2%}.s4{bottom:2%;left:2%}.s5{bottom:2%;right:2%}.s6{bottom:0;left:50%;transform:translateX(-50%)}.s7{top:42%;left:-1%}.s8{top:42%;right:-1%}
 .center{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:20px}.pile{width:76px;height:108px;border-radius:10px}.back{display:grid;place-items:center;background:linear-gradient(135deg,#751c2a,#2b0d14);border:3px solid var(--gold);font-weight:900;color:#f7d98a;box-shadow:0 8px 20px #0008}.discard{position:relative}.card{width:76px;height:108px;border-radius:10px;border:3px solid #fff;position:relative;display:grid;place-items:center;color:#fff;font-size:1.7rem;font-weight:900;box-shadow:0 8px 20px #0009;user-select:none}.card:before{content:"";position:absolute;inset:10px 4px;border-radius:50%;background:#fff5;transform:rotate(-18deg) scaleX(1.35)}.card>*{position:relative}.red{background:var(--red)}.yellow{background:var(--yellow);color:#382700}.green{background:var(--green)}.blue{background:var(--blue)}.wild{background:conic-gradient(var(--red),var(--yellow),var(--green),var(--blue),var(--red))}
@@ -42,6 +44,16 @@ button,input{font:inherit}.hidden{display:none!important}.screen{height:100%;dis
 .rankboard .rank-name{flex:1;font-weight:600;color:var(--cream);font-size:1rem}
 
 .flying-card{position:fixed;z-index:200;pointer-events:none;width:60px;height:86px;border-radius:8px;border:2px solid #fff;display:grid;place-items:center;color:#fff;font-size:1.2rem;font-weight:900;box-shadow:0 6px 16px #000a}
+.reshuffle-overlay{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:95;display:flex;flex-direction:column;align-items:center;gap:8px;background:rgba(18,11,14,.85);border:1px solid var(--gold);border-radius:16px;padding:12px 18px;box-shadow:0 10px 30px #000a;pointer-events:none}
+.reshuffle-overlay .ro-title{color:var(--gold);font-weight:900;font-size:.85rem}
+.reshuffle-overlay #reshuffleCards{display:flex;gap:6px;perspective:600px}
+.rflip{width:76px;height:108px;position:relative;transform-style:preserve-3d;transition:transform .5s ease-in-out}
+.rflip .rface{position:absolute;inset:0;backface-visibility:hidden;border-radius:10px;display:grid;place-items:center}
+.rflip .rface.back{background:linear-gradient(135deg,#751c2a,#2b0d14);border:3px solid var(--gold);border-radius:10px;color:#f7d98a;font-weight:900;transform:rotateY(0deg)}
+.rflip .rface.front{background:var(--red);transform:rotateY(180deg)}
+.rflip.flipped{transform:rotateY(180deg)}
+.pile-shuffle{animation:pileShuffle .9s ease-in-out 1}
+@keyframes pileShuffle{0%{transform:translateY(0) scale(1)}12%{transform:translateY(-8px) rotate(-4deg) scale(1.05)}25%{transform:translateY(0) rotate(4deg)}37%{transform:translateY(-6px) rotate(-6deg) scale(1.03)}50%{transform:translateY(0) rotate(6deg)}62%{transform:translateY(-8px) rotate(-4deg) scale(1.06)}75%{transform:translateY(0) rotate(3deg)}88%{transform:translateY(-5px) rotateY(50deg)}100%{transform:translateY(0) scale(1)}}
 .seat-label{position:absolute;left:50%;transform:translateX(-50%);font-weight:900;font-size:1rem;pointer-events:none;z-index:15;white-space:nowrap;animation:labelFade 3s forwards}
 .seat-label.cut-label{color:#f66;text-shadow:0 0 10px #f00,0 0 20px #f00}
 .seat-label.cut-presser{color:#ff9900;text-shadow:0 0 8px #ff6600}
@@ -92,9 +104,39 @@ button,input{font:inherit}.hidden{display:none!important}.screen{height:100%;dis
 .chat-input{display:flex;gap:6px;padding:8px;border-top:1px solid #6c5427}
 .chat-input input{flex:1;padding:8px;border-radius:8px;border:1px solid #6d562d;background:#120b0e;color:#fff;min-width:0}
 .chat-input .btn{padding:8px 12px}
+.gif-picker{display:none;flex-direction:column;border-top:1px solid #6c5427;padding:8px;background:#160d12}
+.gif-picker.open{display:flex}
+.gif-search{display:flex;gap:6px;margin-bottom:8px}
+.gif-search input{flex:1;padding:8px;border-radius:8px;border:1px solid #6d562d;background:#120b0e;color:#fff;min-width:0}
+.gif-search .btn{padding:8px 10px}
+.gif-msg{max-width:150px;border:2px solid var(--gold);border-radius:10px;overflow:hidden;cursor:pointer;flex-shrink:0;transition:transform .12s}
+.gif-msg img{width:100%;height:100%;object-fit:cover;display:block}
+.gif-msg:hover{transform:scale(1.08)}
+.gif-bubble{position:absolute;left:50%;top:5px;transform:translateX(-50%);max-width:150px;max-height:150px;border:2px solid #fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px #0008;pointer-events:none;z-index:16;animation:bubbleIn .25s ease,bubbleOut .4s ease 5.6s forwards;background:#120b0e}
+.gif-bubble img{width:100%;height:auto;display:block}
+.s1 .chat-bubble,.s2 .chat-bubble,.s3 .chat-bubble,.s7 .chat-bubble,.s8 .chat-bubble,
+.s1 .typing-indicator,.s2 .typing-indicator,.s3 .typing-indicator,.s7 .typing-indicator,.s8 .typing-indicator{bottom:auto;top:136px}
+.s1 .chat-bubble::after,.s2 .chat-bubble::after,.s3 .chat-bubble::after,.s7 .chat-bubble::after,.s8 .chat-bubble::after,
+.s1 .typing-indicator::after,.s2 .typing-indicator::after,.s3 .typing-indicator::after,.s7 .typing-indicator::after,.s8 .typing-indicator::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:#fff}
+@media(max-width:700px){
+ .s1 .chat-bubble,.s2 .chat-bubble,.s3 .chat-bubble,.s7 .chat-bubble,.s8 .chat-bubble,
+ .s1 .typing-indicator,.s2 .typing-indicator,.s3 .typing-indicator,.s7 .typing-indicator,.s8 .typing-indicator{top:108px}
+}
+
 @media(max-width:700px){
   #chatPanel{right:0;left:0;bottom:0;width:100%;height:60vh;border-radius:14px 14px 0 0}
+  .gif-bubble{top:5px;max-width:120px;max-height:120px}
 }
+.chat-bubble{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 8px);background:#fff;color:#1a1a1a;font-size:.78rem;font-weight:600;padding:6px 10px;border-radius:12px;max-width:150px;text-align:center;word-wrap:break-word;white-space:normal;box-shadow:0 2px 10px #0008;pointer-events:none;z-index:16;animation:bubbleIn .25s ease,bubbleOut .4s ease 2.6s forwards;line-height:1.2}
+.chat-bubble::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff}
+.typing-indicator{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 8px);background:#fff;color:#1a1a1a;font-size:.85rem;font-weight:700;padding:5px 10px;border-radius:12px;box-shadow:0 2px 10px #0008;pointer-events:none;z-index:16;animation:bubbleIn .25s ease;white-space:nowrap;line-height:1}
+.typing-indicator::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff}
+.typing-dots span{animation:typingDot 1.2s infinite;font-size:.85rem}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes typingDot{0%,60%,100%{opacity:.3}30%{opacity:1}}
+@keyframes bubbleIn{0%{opacity:0;transform:translateX(-50%) scale(.7)}100%{opacity:1;transform:translateX(-50%) scale(1)}}
+@keyframes bubbleOut{0%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) scale(.8) translateY(-6px)}}
 </style>
 </head>
 <body>
@@ -130,7 +172,8 @@ button,input{font:inherit}.hidden{display:none!important}.screen{height:100%;dis
   <div id="specBar" class="hidden"></div>
 
   <div class="center"><div class="pile back" id="drawPile">UNO</div><div class="pile discard" id="discard"></div><div id="colorIndicator"><div id="colorDot"><span id="colorNum"></span></div></div></div>
-  <div class="hand-wrap"><div class="hand" id="hand"></div><div style="display:flex;justify-content:center;gap:8px;align-items:center"><button class="btn drawbtn" id="drawBtn">Draw</button><button class="btn gold drawbtn" id="unoBtn">UNO!</button><button class="btn drawbtn" id="cutBtn" style="background:linear-gradient(#e44,#a22);color:#fff;border-color:#f66">CUT</button></div></div>
+  <div class="reshuffle-overlay hidden" id="reshuffleReveal"><div id="reshuffleCards"></div></div>
+  <div class="hand-wrap"><div class="hand" id="hand"></div><div style="display:flex;justify-content:center;gap:8px;align-items:center"><button class="btn gold drawbtn" id="unoBtn">UNO!</button><button class="btn drawbtn" id="reshuffleBtn" title="Peek 3 top cards then shuffle the deck">🔀</button><button class="btn drawbtn" id="cutBtn" style="background:linear-gradient(#e44,#a22);color:#fff;border-color:#f66">CUT</button></div></div>
 </div>
 
 <div id="modal" class="overlay hidden"><div class="modal"><h2 id="modalTitle"></h2><p id="modalText"></p><button class="btn gold" id="modalOk">OK</button></div></div>
@@ -139,7 +182,11 @@ button,input{font:inherit}.hidden{display:none!important}.screen{height:100%;dis
 <div id="chatPanel" class="hidden">
   <div class="chat-head">Chat <button class="icon" id="chatClose">×</button></div>
   <div id="chatMsgs"></div>
-  <div class="chat-input"><input id="chatInput" maxlength="200" placeholder="Type a message…"><button class="btn gold" id="chatSend">Send</button></div>
+  <div class="chat-input"><input id="chatInput" maxlength="200" placeholder="Type a message…"><button class="icon" id="gifBtn" title="Send a GIF">🎬</button><button class="btn gold" id="chatSend">Send</button></div>
+  <div class="gif-picker" id="gifPicker">
+    <div class="gif-search"><input id="gifSearch" type="text" placeholder="Search a GIF (e.g. cat, fire, dance)…" maxlength="60"><button class="btn" id="gifSearchBtn" type="button">Search</button></div>
+    <div class="gif-grid" id="gifGrid" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-height:150px;overflow-y:auto"></div>
+  </div>
 </div>
 <div id="rejoinModal" class="overlay hidden"><div class="modal"><h2>Welcome back!</h2><p>You were in a game. Resume with your cards, or spectate and join the next round?</p><div class="row"><button class="btn gold" id="resumeBtn">Resume</button><button class="btn" id="spectateBtn">Spectate</button></div></div></div>
 <div id="kickedModal" class="overlay hidden"><div class="modal"><h2>Removed from lounge</h2><p>The host removed you. You can refresh to rejoin as a new player.</p><div class="row"><button class="btn gold" id="kickedOk">OK</button></div></div></div>
@@ -207,6 +254,109 @@ function showSeatLabel(playerId,text,cls,duration){
   el.style.top="-22px";
   seatEl.appendChild(el);
   setTimeout(function(){if(el.parentNode)el.remove();},duration||3000);
+}
+
+var chatBubbleQueues={};
+function showChatBubble(playerId,text,duration){
+  if(!game)return;
+  var pl=game.players.find(function(p){return p.id===playerId;});
+  if(!pl)return;
+  var seatEl=document.querySelector(".seat.s"+(pl.seat+1));
+  if(!seatEl)return;
+  if(!chatBubbleQueues[playerId])chatBubbleQueues[playerId]=[];
+  chatBubbleQueues[playerId].push(text);
+  if(chatBubbleQueues[playerId].length===1)drainBubbleQueue(playerId,seatEl,duration||3000);
+}
+function drainBubbleQueue(playerId,seatEl,duration){
+  if(!chatBubbleQueues[playerId]||!chatBubbleQueues[playerId].length){delete chatBubbleQueues[playerId];return;}
+  var text=chatBubbleQueues[playerId].shift();
+  var existing=seatEl.querySelector(".chat-bubble");
+  if(existing)existing.remove();
+  var el=document.createElement("div");
+  el.className="chat-bubble";
+  el.textContent=text.length>40?text.slice(0,40)+"…":text;
+  seatEl.appendChild(el);
+  setTimeout(function(){if(el.parentNode)el.remove();drainBubbleQueue(playerId,seatEl,duration);},duration);
+}
+var gifBubbleQueues={};
+function showGifBubble(playerId,url,width,height,duration){
+  if(!game)return;
+  var pl=game.players.find(function(p){return p.id===playerId;});
+  if(!pl)return;
+  var seatEl=document.querySelector(".seat.s"+(pl.seat+1));
+  if(!seatEl)return;
+  if(!gifBubbleQueues[playerId])gifBubbleQueues[playerId]=[];
+  gifBubbleQueues[playerId].push({url:url,width:width,height:height});
+  if(gifBubbleQueues[playerId].length===1)drainGifBubbleQueue(playerId,seatEl,duration||6000);
+}
+function drainGifBubbleQueue(playerId,seatEl,duration){
+  if(!gifBubbleQueues[playerId]||!gifBubbleQueues[playerId].length){delete gifBubbleQueues[playerId];return;}
+  var item=gifBubbleQueues[playerId].shift();
+  var url=item.url;
+  var existing=seatEl.querySelector(".gif-bubble");
+  if(existing)existing.remove();
+  var el=document.createElement("div");
+  el.className="gif-bubble";
+  el.innerHTML="<img src=\""+url+"\" alt=\"gif\">";
+  var w=Number(item.width)||0,h=Number(item.height)||0;
+  var max=window.innerWidth<=700?120:150;
+  if(w>0&&h>0){
+    var scale=Math.min(max/w,max/h,1);
+    el.style.width=Math.round(w*scale)+"px";
+  }
+  seatEl.appendChild(el);
+  setTimeout(function(){if(el.parentNode)el.remove();drainGifBubbleQueue(playerId,seatEl,duration);},duration);
+}
+var typingTimers={};
+function showTypingIndicator(playerId){
+  if(!game)return;
+  var pl=game.players.find(function(p){return p.id===playerId;});
+  if(!pl)return;
+  if(pl.id===myId)return;
+  var seatEl=document.querySelector(".seat.s"+(pl.seat+1));
+  if(!seatEl)return;
+  var existing=seatEl.querySelector(".typing-indicator");
+  if(existing)existing.remove();
+  clearTimeout(typingTimers[playerId]);
+  var el=document.createElement("div");
+  el.className="typing-indicator";
+  el.innerHTML="<span class=\"typing-dots\"><span>.</span><span>.</span><span>.</span></span>";
+  seatEl.appendChild(el);
+  typingTimers[playerId]=setTimeout(function(){if(el.parentNode)el.remove();delete typingTimers[playerId];},3000);
+}
+function showReshuffleReveal(cards){
+  var overlay=$("reshuffleReveal");if(!overlay)return;
+  overlay.classList.remove("hidden");
+  var box=$("reshuffleCards");box.innerHTML="";
+  (cards||[]).forEach(function(c){
+    var wrap=document.createElement("div");wrap.className="rflip";
+    var fcard=cardEl(c,false,true);
+    var front=document.createElement("div");front.className="rface front";front.appendChild(fcard);
+    var back=document.createElement("div");back.className="rface back";back.textContent="UNO";
+    wrap.appendChild(front);wrap.appendChild(back);
+    box.appendChild(wrap);
+  });
+  clearTimeout(window._rsTimer);
+  var wraps=box.querySelectorAll(".rflip");
+  var i=0;
+  var flipTimer=setInterval(function(){
+    if(i>=wraps.length){clearInterval(flipTimer);flipTimer=null;startShuffleAnim();return;}
+    wraps[i].classList.add("flipped");
+    i++;
+  },520);
+  function startShuffleAnim(){
+    setTimeout(function(){
+      overlay.classList.add("hidden");
+      var pile=$("drawPile");
+      if(pile){
+        pile.classList.remove("pile-shuffle");
+        void pile.offsetWidth; // restart animation
+        pile.classList.add("pile-shuffle");
+        clearTimeout(window._pileShuffleTimer);
+        window._pileShuffleTimer=setTimeout(function(){pile.classList.remove("pile-shuffle");},1200);
+      }
+    },200);
+  }
 }
 
 function renderRoom(){
@@ -294,12 +444,11 @@ function renderGame(){
   $("hand").innerHTML="";var me=game.players.find(function(p){return p.id===myId});var iAmSpectator=!me||me.spectating;var myTurn=!iAmSpectator&&game.turn===me.seat&&!game.winner&&!game.isOver;
   game.hand.forEach(function(c){$("hand").appendChild(cardEl(c,!iAmSpectator,!(myTurn&&playable(c))))});
   if(iAmSpectator){
-    $("drawBtn").disabled=true;$("drawBtn").textContent="Spectating";
-    $("unoBtn").disabled=true;$("cutBtn").disabled=true;
+    $("unoBtn").disabled=true;$("cutBtn").disabled=true;$("reshuffleBtn").disabled=true;
     $("specBar").classList.remove("hidden");$("specBar").textContent="You are spectating — use chat to interact with players";
   } else {
-    $("drawBtn").disabled=false;$("drawBtn").textContent="Draw";
     $("unoBtn").disabled=false;$("cutBtn").disabled=!hasCutTarget();
+    $("reshuffleBtn").disabled=!(myTurn&&!game.reshuffled);
     $("specBar").classList.add("hidden");
   }
   if(game.isOver && game.rankings && game.rankings.length){
@@ -419,6 +568,8 @@ ws.onmessage=function(e){var m=JSON.parse(e.data);
   if(m.type==="rejoinChoice"){$("rejoinModal").classList.remove("hidden");}
   if(m.type==="kicked"){$("kickedModal").classList.remove("hidden");}
   if(m.type==="chat"){addChat(m);}
+  if(m.type==="chatgif"){addChatGif(m);}
+  if(m.type==="typing"){showTypingIndicator(m.playerId);}
   if(m.type==="turnTimer")showTurnTimer(m.seconds,m.playerId);
 
   if(m.type==="hostChanged"){toast(m.username+" now has host access.");if(room){room.hostId=m.hostId;renderRoom()}}
@@ -451,6 +602,7 @@ ws.onmessage=function(e){var m=JSON.parse(e.data);
   if(m.type==="countdownCancel"){$("countdownOverlay").classList.add("hidden");}
   if(m.type==="started"){toast("Game started!");$("countdownOverlay").classList.add("hidden");}
   if(m.type==="sound")playSound(m.name);
+  if(m.type==="reshuffleReveal")showReshuffleReveal(m.cards);
 };
 
 $("joinLounge").onclick=function(){var u=$("username").value.trim();if(!u)return toast("Enter a username.");send("join",{username:u,avatar:selectedAvatar})};
@@ -458,9 +610,10 @@ $("maxPlayers").onchange=function(){isHost&&send("setSettings",{maxPlayers:+$("m
 $("minCards").onchange=$("maxCards").onchange=function(){isHost&&send("setSettings",{maxPlayers:+$("maxPlayers").value,minCards:+$("minCards").value,maxCards:+$("maxCards").value})};
 $("readyBtn").onclick=function(){send("ready")};
 $("endGame").onclick=function(){if(confirm("End this game?"))send("end")};
-$("drawPile").onclick=function(){send("draw")};$("drawBtn").onclick=function(){send("draw")};
+$("drawPile").onclick=function(){send("draw")};
 $("unoBtn").onclick=function(){send("uno")};
 $("cutBtn").onclick=function(){send("cut")};
+$("reshuffleBtn").onclick=function(){send("reshuffle")};
  $("leave").onclick=function(){location.reload()};
   $("resumeBtn").onclick=function(){send("resume");$("rejoinModal").classList.add("hidden")};
   $("spectateBtn").onclick=function(){send("spectate");$("rejoinModal").classList.add("hidden")};
@@ -469,12 +622,55 @@ $("cutBtn").onclick=function(){send("cut")};
  $("chatClose").onclick=function(){$("chatPanel").classList.add("hidden")};
  $("chatSend").onclick=function(){var t=$("chatInput").value.trim();if(!t)return;send("chat",{text:t});$("chatInput").value="";};
  $("chatInput").addEventListener("keydown",function(e){if(e.key==="Enter")$("chatSend").click();});
+ var __typingLast=0;
+ $("chatInput").addEventListener("input",function(){
+   var now=Date.now();
+   if(now-__typingLast>1500){send("typing");__typingLast=now;}
+ });
  function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
  function addChat(m){
    var box=$("chatMsgs");var d=document.createElement("div");d.className="chat-msg";
    d.innerHTML='<img src="'+(m.avatar||"avatar1.jpg")+'" alt=""><div class="cm-body"><div class="cm-name">'+escapeHtml(m.username)+'</div><div>'+escapeHtml(m.text)+'</div></div>';
    box.appendChild(d);box.scrollTop=box.scrollHeight;
+   if(m.playerId&&m.text)showChatBubble(m.playerId,m.text,3000);
  }
+ function addChatGif(m){
+   var box=$("chatMsgs");var d=document.createElement("div");d.className="chat-msg";
+   var gifStyle="";
+   var w=Number(m.width)||0,h=Number(m.height)||0;
+   if(w>0&&h>0){
+     var s=Math.min(150/w,120/h,1);
+     gifStyle=" style=\"width:"+Math.round(w*s)+"px;height:"+Math.round(h*s)+"px\"";
+   }
+   d.innerHTML='<img src="'+(m.avatar||"avatar1.jpg")+'" alt=""><div class="cm-body"><div class="cm-name">'+escapeHtml(m.username)+'</div><span class="gif-msg"'+gifStyle+'><img src="'+m.url+'" alt="gif"></span></div>';
+   box.appendChild(d);box.scrollTop=box.scrollHeight;
+   if(m.playerId&&m.url)showGifBubble(m.playerId,m.url,m.width,m.height,6000);
+ }
+ function buildGifGrid(list){
+   var grid=$("gifGrid");grid.innerHTML="";
+   if(!Array.isArray(list)||!list.length){grid.innerHTML="<div style=\"color:#dccb9f;font-size:.8rem;text-align:center;padding:8px\">No GIFs found. Try another search.</div>";return;}
+list.forEach(function(item){
+      var d=document.createElement("div");d.className="gif-msg";d.style.width="82px";d.style.height="82px";
+      d.innerHTML="<img src=\""+item.url+"\" alt=\"gif\">";
+      d.onclick=function(){
+        send("chatgif",{url:item.url,width:item.width,height:item.height});
+        var p="/gif-proxy?url="+encodeURIComponent(item.url);
+        var pre=new Image();pre.src=p;
+        $("gifPicker").classList.remove("open");
+      };
+      grid.appendChild(d);
+   });
+ }
+ function searchGifs(){
+   var q=($("gifSearch").value||"").trim();
+   fetch("/gif-search?q="+encodeURIComponent(q)).then(function(r){return r.json();}).then(function(d){
+     if(d&&d.needsKey){$("gifGrid").innerHTML="<div style=\"color:#dccb9f;font-size:.8rem;text-align:center;padding:8px\">GIF search needs a GIPHY API key — set GIPHY_KEY on the server.</div>";return;}
+     buildGifGrid((d&&d.results)||[]);
+   }).catch(function(){});
+ }
+ $("gifBtn").onclick=function(){$("gifPicker").classList.toggle("open");if($("gifPicker").classList.contains("open"))searchGifs();};
+ $("gifSearchBtn").onclick=searchGifs;
+ $("gifSearch").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();searchGifs();}});
 
 function playSound(name){
  try{
