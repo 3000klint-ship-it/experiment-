@@ -1,13 +1,14 @@
 {
-  "name": "uno-lounge-mobile-test-fixed",
-  "version": "0.2.0",
+  "name": "uno-lounge",
+  "version": "1.0.0",
   "private": true,
-  "description": "UNO Lounge mobile-first multiplayer test build",
+  "description": "UNO Lounge - multiplayer UNO card game",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "ws": "^8.18.0"
   }

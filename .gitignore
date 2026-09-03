@@ -1,1 +1,9 @@
 node_modules/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.zip
+.env
+gif-feature-backup.js
