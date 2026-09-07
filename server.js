@@ -179,15 +179,19 @@ function drawCards(r,g, gp, count){
   return drawn;
 }
 
+// Player count still in the game (skips finished/away/spectating).
+function activeCount(g){ return g.players.filter(p=>!p.finished && !p.away && !p.spectating).length; }
+
 // When a draw penalty (+2 / +4) is pending, the next player may defend:
 //  - any +2 or +4 card stacks onto the penalty
 //  - a Skip or Reverse of the CURRENT colour passes the penalty to another
-//    player (house rule) instead of cancelling it
+//    player (house rule) instead of cancelling it — but only when more than
+//    2 players remain, otherwise it just bounces the stack back and forth
 // Plain Wild and number cards are NOT valid defences.
 function canPlay(g,c){
   if(g.drawStack>0){
     if(c.type==="draw2"||c.type==="wild4") return true;
-    if((c.type==="skip"||c.type==="reverse") && c.color===g.currentColor) return true;
+    if((c.type==="skip"||c.type==="reverse") && c.color===g.currentColor && activeCount(g)!==2) return true;
     return false;
   }
   const top=g.discard;
@@ -440,15 +444,15 @@ wss.on("connection", ws=>{
       if(m.type==="draw"){handleDraw(ROOM,p);return;}
       if(m.type==="uno"){
         const gp=gamePlayer(ROOM,clientId);
-        if(gp && gp.hand.length===1){gp.calledUno=true;broadcast(ROOM,{type:"sound",name:"uno"});broadcastState(ROOM);}
+        if(gp && gp.hand.length<=2){gp.calledUno=true;broadcast(ROOM,{type:"sound",name:"uno"});broadcastState(ROOM);}
         return;
       }
       if(m.type==="cut"){
         console.log("[CUT] Player",p.username,"pressed CUT");
         const g=ROOM.game;
-        if(!g||g.isOver){console.log("[CUT] Game not active");ws.send(JSON.stringify({type:"error",message:"Game is not active."}));return;}
+        if(!g||g.isOver){console.log("[CUT] Game not active");return;}
         broadcast(ROOM,{type:"cutPressed",playerId:clientId,username:p.username});
-        const target=g.players.find(pl=>!pl.finished&&pl.id!==p.id&&pl.hand.length===1&&!pl.calledUno);
+        const target=g.players.find(pl=>!pl.finished&&pl.id!==p.id&&pl.hand.length===2&&!pl.calledUno);
         console.log("[CUT] Target found:",target?target.username:"none","| finished:"+g.players.map(pl=>pl.username+":"+pl.hand.length+"f:"+pl.finished+"u:"+pl.calledUno).join(", "));
         if(target){
           console.log("[CUT] Drawing 4 cards for",target.username,"hand before:",target.hand.length);
@@ -459,18 +463,16 @@ wss.on("connection", ws=>{
           broadcast(ROOM,{type:"cutAlert",username:target.username,targetId:target.id,drawn:drawn});
           broadcastState(ROOM);
         } else {
-          const candidates=g.players.filter(pl=>!pl.finished&&pl.id!==p.id&&pl.hand.length===1);
-          if(candidates.length===0){
-            ws.send(JSON.stringify({type:"error",message:"No player has exactly 1 card right now."}));
-          }else{
-            ws.send(JSON.stringify({type:"error",message:"All players with 1 card already called UNO!"}));
-          }
+          console.log("[CUT] No valid target — animation only");
         }
         return;
       }
       if(m.type==="emoji"){
         const gp=gamePlayer(ROOM,clientId);
         if(gp) broadcast(ROOM,{type:"emoji",playerId:clientId,emoji:String(m.emoji||"🙂").slice(0,4)});
+      }
+      if(m.type==="unoAnim"){
+        broadcast(ROOM,{type:"unoAnim",playerId:clientId});
       }
       if(m.type==="chat"){
         const text=String(m.text||"").trim().slice(0,200);
